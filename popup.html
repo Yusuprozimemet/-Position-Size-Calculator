@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Position Size Calculator</title>
+  <style>
+    body {
+      width: 400px;
+      padding: 15px;
+      font-family: Arial, sans-serif;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    input, select {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    button {
+      padding: 10px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    button:disabled {
+      background: #ccc;
+    }
+    
+    .results {
+      margin-top: 15px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: none;
+    }
+    
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 5px 0;
+    }
+    
+    .error {
+      color: #f44336;
+      padding: 10px;
+      background: #ffebee;
+      border-radius: 4px;
+    }
+    
+    .loading {
+      text-align: center;
+      display: none;
+    }
+    
+    .preset-button {
+    padding: 5px 10px;
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .preset-button.active {
+    background: #2196F3;
+    color: white;
+  }
+    
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    
+    .history-table th, .history-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .tab {
+      padding: 8px 15px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .tab.active {
+      border-bottom-color: #2196F3;
+      color: #2196F3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="tabs">
+      <div class="tab active" data-tab="calculator">Calculator</div>
+      <div class="tab" data-tab="history">History</div>
+      <div class="tab" data-tab="settings">Settings</div>
+    </div>
+    
+    <div id="calculator" class="tab-content">
+      <div class="preset-buttons">
+        <button class="preset-button" data-risk="1" data-stop="2">Conservative</button>
+        <button class="preset-button" data-risk="2" data-stop="4">Moderate</button>
+        <button class="preset-button" data-risk="3" data-stop="6">Aggressive</button>
+      </div>
+      
+      <div class="input-group">
+        <label for="symbol">Stock Symbol:</label>
+        <input type="text" id="symbol" placeholder="e.g., AAPL">
+      </div>
+      
+      <div class="input-group">
+        <label for="accountSize">Account Size ($):</label>
+        <input type="number" id="accountSize" min="0" step="0.01">
+      </div>
+      
+      <div class="input-group">
+        <label for="riskPercentage">Risk Percentage (%):</label>
+        <input type="number" id="riskPercentage" min="0" max="100" step="0.1">
+      </div>
+      
+      <div class="input-group">
+        <label for="stopLoss">Stop Loss (%):</label>
+        <input type="number" id="stopLoss" min="0" max="100" step="0.1">
+      </div>
+      
+      <div class="input-group">
+        <label for="entryPrice">Entry Price ($):</label>
+        <input type="number" id="entryPrice" min="0" step="0.01" placeholder="Optional">
+      </div>
+      
+      <button id="calculate" disabled>Calculate Position Size</button>
+      
+      <div id="loading" class="loading">
+        Calculating...
+      </div>
+      
+      <div id="results" class="results"></div>
+    </div>
+    
+    <div id="history" class="tab-content" style="display: none">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Symbol</th>
+            <th>Position Size</th>
+            <th>Risk Amount</th>
+            <th>Entry Price</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+    
+    <div id="settings" class="tab-content" style="display: none">
+      <div class="input-group">
+        <label for="defaultRisk">Default Risk Percentage:</label>
+        <input type="number" id="defaultRisk" min="0" max="100" step="0.1">
+      </div>
+      
+      <div class="input-group">
+        <label for="defaultStop">Default Stop Loss:</label>
+        <input type="number" id="defaultStop" min="0" max="100" step="0.1">
+      </div>
+      
+      <button id="saveSettings">Save Settings</button>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
